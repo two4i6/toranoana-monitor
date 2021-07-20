@@ -4,6 +4,7 @@ import com.luobo.toranoana_monitor.dao.UrlData;
 import com.luobo.toranoana_monitor.dao.UrlDataDao;
 import com.luobo.toranoana_monitor.param.Param;
 import com.luobo.toranoana_monitor.util.ElementChecker;
+import com.luobo.toranoana_monitor.util.ImgCache;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.HttpURLConnection;
@@ -102,6 +103,7 @@ public abstract class Checker implements Runnable{
     protected void add2List(UrlData urlData){
         if(urlData.isValid()){
             UrlDataDao.getUrlDataDao().update(urlData);
+            new Thread(new ImgCache(urlData.getImgUrlStr(), urlData.getId())).start();
         }
     }
 
