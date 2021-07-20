@@ -67,10 +67,6 @@ public class IndexController {
     }
 
     /**
-     * 工具方法
-     */
-
-    /**
      * 设置搜索标签tag
      * @param tag 用户输入的标签
      */

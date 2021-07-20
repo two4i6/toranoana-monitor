@@ -1,7 +1,7 @@
 package com.luobo.toranoana_monitor.service;
 
-import com.luobo.toranoana_monitor.checker.InitFactory;
 import com.luobo.toranoana_monitor.checker.NormalFactory;
+import com.luobo.toranoana_monitor.checker.QuietFactory;
 import com.luobo.toranoana_monitor.dao.UrlData;
 import com.luobo.toranoana_monitor.dao.UrlDataDao;
 import com.luobo.toranoana_monitor.framework.CheckerFactory;
@@ -22,7 +22,7 @@ public class RunnerService {
     private CheckerFactory checkerFactory;
 
     public void initScan(){
-        checkerFactory = new InitFactory();
+        checkerFactory = new QuietFactory();
         for (UrlData urlData : UrlDataDao.getUrlDataDao().getAllInvalid()) {
             if (isShutDown)
                 break;
@@ -42,7 +42,6 @@ public class RunnerService {
             log.info("轮次等待错误");
         }
         shutDown();
-        Param.getParam().setInitScan(false);
         log.info(" 初次扫描结束 发现有效: " + UrlDataDao.getUrlDataDao().getAllValid().size()
                 + " 无效: " + UrlDataDao.getUrlDataDao().getAllInvalid().size());
         Scan();

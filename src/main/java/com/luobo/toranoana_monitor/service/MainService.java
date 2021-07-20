@@ -25,7 +25,6 @@ public class MainService {
     @Async
     public void runService(int startPoint, int range){
         runnerService = new RunnerService();
-        Param.getParam().setInitScan(true);
         log.info(" 开始生成Url类 id范围: "+ startPoint + " ~ "+ (startPoint+range));
         for (int i = 0; i < range; i++) {
             UrlDataDao.getUrlDataDao().add(startPoint + i);

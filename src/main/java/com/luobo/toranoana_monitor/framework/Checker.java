@@ -3,6 +3,7 @@ package com.luobo.toranoana_monitor.framework;
 import com.luobo.toranoana_monitor.dao.UrlData;
 import com.luobo.toranoana_monitor.dao.UrlDataDao;
 import com.luobo.toranoana_monitor.param.Param;
+import com.luobo.toranoana_monitor.util.ElementChecker;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.HttpURLConnection;
@@ -52,6 +53,23 @@ public abstract class Checker implements Runnable{
                 if(param.isDebug())
                     log.info(urlData.getUrlStr() + " 无效");
             }
+            ElementChecker elementChecker = new ElementChecker(connection);
+            if (ResponseCode == 200) {
+                log.info(urlData.getUrlStr() + " 有效");
+                urlData.setValid(true);
+                if (elementChecker.isPassword()) {
+                    urlData.setPassword(true);
+                    log.info(urlData.getUrlStr() + " 发现密码");
+                }
+                if (param.isPasswordScan()) {
+                    if (elementChecker.isKey(param.getSearchKeys())) {
+                        urlData.setKey(true);
+                        log.info(urlData.getUrlStr() + " 发现tag");
+                    }
+                }
+            }
+            add2List(urlData);
+            cleanMem(connection);
         }catch (Exception e){
             log.info(e.getMessage()
                     +"id: " +  urlData.getId()
@@ -60,12 +78,11 @@ public abstract class Checker implements Runnable{
         }
     }
 
-    protected void add2List(UrlData urlData){
-        if(urlData.isValid()){
-            UrlDataDao.getUrlDataDao().update(urlData);
-        }
-    }
-
+    /**
+     * 处理特殊情况 如403或网络错误
+     * @param connection HTTP链接
+     * @param suspendTime 等待时间
+     */
     protected void suspendProcess(HttpURLConnection connection, int suspendTime){
         cleanMem(connection); //释放内存
         try{
@@ -78,8 +95,22 @@ public abstract class Checker implements Runnable{
         }
     }
 
+    /**
+     * 把新的urlData加入列表
+     * @param urlData 新生成的urlData
+     */
+    protected void add2List(UrlData urlData){
+        if(urlData.isValid()){
+            UrlDataDao.getUrlDataDao().update(urlData);
+        }
+    }
+
+    /**
+     * 关闭链接
+     * @param connection HTTP链接
+     */
     protected void cleanMem(HttpURLConnection connection){
-        connection.disconnect();  //关闭远程连接
+        connection.disconnect();
     }
 
 }

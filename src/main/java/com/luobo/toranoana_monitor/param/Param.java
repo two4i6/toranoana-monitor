@@ -26,13 +26,16 @@ public class Param {
     private String FilteredFileName = "filtered_lines.csv";
     private String idA = "040030";
 
-    private boolean debug;
+    //一些可以在前端设置的参数
+    private boolean beeping = true;
+    private boolean popups = true;
+    private boolean debug = true;
+
     private boolean passwordScan;
     private boolean banned;
     private String searchKeys;
     private boolean searchKey;
     private boolean pause; //实现暂停功能
-    private boolean initScan;
 
     public void SetupParam(boolean passwordScan, String searchKeys, boolean searchKey){
         this.passwordScan = passwordScan;
