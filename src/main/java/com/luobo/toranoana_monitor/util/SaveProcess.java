@@ -46,11 +46,19 @@ public class SaveProcess {
     }
 
     /**
-     * TODO 文档格式检验
-     * @return true 存档格式争取
+     * 文档格式检验
+     * @return true 存档格式验证
      */
-    public boolean saveFormatCheck(List<String[]> save) {
-        log.info(" 正在检查存档文件格式！");
+    public boolean saveFileFormatCheck(List<String[]> save) {
+        log.info(" 正在检查" + save.size() + "条无效链接的格式...");
+        int i;
+        for(i = 0; i < save.size()-1; i++){
+            try {
+                return !Util.getUtil().idFormatCheck(Integer.parseInt(save.get(i)[1]));
+            }catch (Exception e){
+                log.info("第" + (i+1) +" 条存档格式错误！请检查！" + e);
+            }
+        }
         return true;
     }
 

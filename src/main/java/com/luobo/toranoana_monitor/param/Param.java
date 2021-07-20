@@ -29,7 +29,7 @@ public class Param {
     //一些可以在前端设置的参数
     private boolean beeping = true;
     private boolean popups = true;
-    private boolean debug = true;
+    private boolean debug = false;
 
     private boolean passwordScan;
     private boolean banned;

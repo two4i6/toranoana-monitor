@@ -43,7 +43,7 @@ public class MainService {
         List<String[]> save = SaveProcess.getSaveProcess().loadSaveFile(file);
         if(!save.isEmpty()){
             log.info(" 发现现有存档，其中可能包含 " + save.size() +" 条无效链接");
-            if(SaveProcess.getSaveProcess().saveFormatCheck(save)) {
+            if(SaveProcess.getSaveProcess().saveFileFormatCheck(save)) {
                 SaveProcess.getSaveProcess().loadSave(save);
                 runnerService.Scan();
             }else {

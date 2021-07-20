@@ -29,6 +29,10 @@ public class Util {
         return sdf.format(d);
     }
 
+    public boolean idFormatCheck(int id){
+        return id > 1000000; //id为6为
+    }
+
     public static Util getUtil(){
         return util;
     }

@@ -115,7 +115,7 @@ public class IndexController {
      */
     private boolean paramChecker(String startPoint, String range){
         try{
-            if(Integer.parseInt(startPoint) < 100000 || Integer.parseInt(range) > 100000 ){
+            if(Util.getUtil().idFormatCheck(Integer.parseInt(startPoint)) || Integer.parseInt(range) > 100000 ){
                 log.info(" 请检查并重新输入起始id！");
                 return false;
             }else{
