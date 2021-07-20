@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css}">
+    <title>虎穴上新监控</title>
+</head>
+
+<body>
+<div id="login-box">
+    <form action="#" th:action="@{/button}" method="post">
+        <input class="return-button" type="submit" name="action" value="返回结果" style='position:fixed;left: 0px; top: 0px;'>
+        <input class="stop-button" type="submit" name="action" value="停止扫描" th:if = "${not #strings.isEmpty(Msg)}" style='position:fixed;right: 0px; top: 0px;'>
+        <input class="return-button" type="submit" name="action" value="过滤列表" style='position:fixed;left: 0px; top: 50px;' th:if="${not #strings.isEmpty(Msg)}">
+    </form>
+
+    <h1>[[#{login.tips}]]</h1>
+    <h4 style="color:white">若读取存档请将起点与范围留空可</h4>
+    <p style="color: navajowhite" th:text="${errorMsg}" th:if = "${not #strings.isEmpty(errorMsg)}"></p>
+    <form class = "form" action="#" th:action="@{/result/process}" method="post">
+
+        <div class="item" id="btn">
+            <i class="fa fa-arrow-circle-right" aria-hidden="true" style="font-size:24px"></i>
+            <label style="color:red;"><input type="number" name="startPoint" th:placeholder="#{setting.startpoint}"></label>
+        </div>
+        <div id="box1" style="display:none; color: white">起点为id的后六位数, 例如123456</div>
+
+        <div class="item"  id="range-box">
+            <i class="fa fa-arrows-h" aria-hidden="true" style="font-size:24px"></i>
+            <label style="color:red;"><input type="number" name="range" th:placeholder="#{setting.range}"></label>
+        </div>
+        <div id="box2" style="display:none; color: white" >需要监控的范围</div>
+
+        <div class="item"  id="tag-box">
+            <i class="fa fa-tag" aria-hidden="true" style="font-size:24px"></i>
+            <label style="color:white;"><input type="text" name="tag" placeholder="标签"></label>
+        </div>
+        <div id="box3" style="display:none; color: white" >选填: 需要监控的标签</div>
+
+        <div class="item"  id="delay-box">
+            <i class="fa fa-clock-o" aria-hidden="true" style="font-size:24px"></i>
+            <label style="color:white;"><input type="number" name="delay" placeholder="延迟"></label>
+        </div>
+        <div id="box4" style="display:none; color: white" >选填: 选择输入扫描延迟，默认为300ms</div>
+
+        <!--
+        <div>
+            <div class="checkbox" style="color:white">
+                <label><input type="checkbox">标签搜索</label>
+            </div>
+            <div class="checkbox" style="color:white">
+                <label><input type="checkbox">密码搜索</label>
+            </div>
+            <div class="checkbox" style="color:white">
+                <label><input type="checkbox">存档读取</label>
+            </div>
+            <div class="checkbox" style="color:white">
+                <label><input type="checkbox">设置延迟</label>
+            </div>
+        </div>
+        -->
+
+        <input id="modalBtn" class="login-button" type="submit" th:value="#{login.button}">
+        <input class="login-button" type="reset" value="重置" />
+        <!-- 弹框部分 -->
+        <div id="simpleModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="closeBtn">&times;</span>
+                    <h2 style = "text-align:center">结束进程中</h2>
+                </div>
+                <div class="modal-body">
+                    <p style = "text-align:center">请稍等~</p>
+                    <!-- loading动画 -->
+                    <div class="loading">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    // 获取弹窗元素
+    var modal = document.getElementById("simpleModal");
+
+    // 获取按钮元素
+    var modalBtn = document.getElementById("modalBtn");
+
+    // 获取关闭弹窗按钮元素
+    var closeBtn = document.getElementsByClassName("closeBtn")[0];
+
+    // 监听打开弹窗事件
+    modalBtn.addEventListener("click",openModal);
+
+    // 监听关闭弹窗事件
+    closeBtn.addEventListener("click",closeModal);
+
+    // 监听window关闭弹窗事件
+    window.addEventListener("click",outsideClick);
+
+    // 弹窗事件
+    function openModal () {
+        modal.style.display = "block";
+    }
+
+    // 关闭弹框事件
+    function closeModal () {
+        modal.style.display = "none";
+    }
+
+    // outsideClick
+    function outsideClick (e) {
+        if(e.target === modal){
+            modal.style.display = "none";
+        }
+    }
+
+    (function(){
+        var btn = document.getElementById('btn');
+        var box = document.getElementById('box1');
+        var timer = null;
+        box.onmouseover = btn.onmouseover = function(){
+            if(timer) clearTimeout(timer)
+            box.style.display = 'block';
+        }
+        box.onmouseout = btn.onmouseout = function(){
+            timer = setTimeout(function(){
+                box.style.display = 'none';
+            },400);
+
+        }
+    })();
+
+    (function(){
+        var btn = document.getElementById('range-box');
+        var box = document.getElementById('box2');
+        var timer = null;
+        box.onmouseover = btn.onmouseover = function(){
+            if(timer) clearTimeout(timer)
+            box.style.display = 'block';
+        }
+        box.onmouseout = btn.onmouseout = function(){
+            timer = setTimeout(function(){
+                box.style.display = 'none';
+            },400);
+
+        }
+    })();
+
+    (function(){
+        var btn = document.getElementById('tag-box');
+        var box = document.getElementById('box3');
+        var timer = null;
+        box.onmouseover = btn.onmouseover = function(){
+            if(timer) clearTimeout(timer)
+            box.style.display = 'block';
+        }
+        box.onmouseout = btn.onmouseout = function(){
+            timer = setTimeout(function(){
+                box.style.display = 'none';
+            },400);
+
+        }
+    })();
+
+    (function(){
+        var btn = document.getElementById('delay-box');
+        var box = document.getElementById('box4');
+        var timer = null;
+        box.onmouseover = btn.onmouseover = function(){
+            if(timer) clearTimeout(timer)
+            box.style.display = 'block';
+        }
+        box.onmouseout = btn.onmouseout = function(){
+            timer = setTimeout(function(){
+                box.style.display = 'none';
+            },400);
+
+        }
+    })();
+</script>
+</body>
+</html>
