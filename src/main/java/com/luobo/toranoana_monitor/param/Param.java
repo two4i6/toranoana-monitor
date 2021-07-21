@@ -26,10 +26,10 @@ public class Param {
     private String FilteredFileName = "filtered_lines.csv";
     private String idA = "040030";
 
-    //一些可以在前端设置的参数
+    //TODO 可以在前端设置的参数
     private boolean beeping = true;
     private boolean popups = true;
-    private boolean debug = false;
+    private boolean debug = true;
 
     private boolean passwordScan;
     private boolean banned;

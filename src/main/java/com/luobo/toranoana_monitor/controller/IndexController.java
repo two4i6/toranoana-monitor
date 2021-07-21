@@ -34,7 +34,7 @@ public class IndexController {
         }
         if (Param.getParam().isDebug())
             model.addAttribute("errorMsg", "debug模式");
-        return "menu";
+        return "index";
     }
 
     /**
@@ -56,10 +56,11 @@ public class IndexController {
         mainService.shutDown();
         setParam(tag);
         setDelay(delay);
+        UrlDataDao.getUrlDataDao().drop();
         if(isLoadSave(startPoint,range)){
-            return "redirect:/result/valid/auto";
+            return "redirect:/result/valid";
         }else if(paramChecker(startPoint, range)){
-            return "redirect:/result/valid/auto";
+            return "redirect:/result/valid";
         }else{ //输入错误
             model.addAttribute("errorMsg", "输入错误！请检查！");
         }

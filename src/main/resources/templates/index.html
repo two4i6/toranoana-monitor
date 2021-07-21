@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/tag.css}">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+</head>
+
+<body>
+    <div class="progress-tab">
+        
+    </div>
+
+    <div class="menu">
+        <div class="nav-bar">
+            <button class=nav-bar-button-open id="nav-bar-button-open">
+                <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+            </button>
+            <button class=nav-bar-button-close id="nav-bar-button-close">
+                <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <div class="nav-tab" id="nav-tab">
+            <form class="menu-nav-tab" th:action="@{/button}" method="post">
+                <fieldset>
+                    <legend>导航</legend>
+                    <input class="nav-button" name="action" type="submit" value="有效清单">
+                    <input class="nav-button" name="action" type="submit" value="无效清单">
+                    <input class="nav-button" name="action" type="submit" value="过滤清单">
+                </fieldset>
+            </form>
+        </div>
+
+        <div class="menu-bar">
+            <button class="menu-bar-button-up" id="menu-bar-button-up">
+                <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+            </button>
+            <button class="menu-bar-button-down" id="menu-bar-button-down">
+                <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <div class="menu-tab" id="menu-tab">
+            <form class="menu-tab-form" th:action="@{/result/process}" method="post">
+                <fieldset>
+                    <legend>扫描设置</legend>
+                    <div class="item">
+                        <label for="startPoint"><input class="form-input" type="number" name="startPoint" placeholder="起点"></label>
+                    </div>
+                    <div class="item">
+                        <label for="range"><input class="form-input" type="number" name="range" placeholder="范围"></label>
+                    </div>
+                    <div class="item">
+                        <label for="delay"><input class="form-input" type="number" name="delay" placeholder="延迟"></label>
+                    </div>
+                    <div class="item">
+                        <input class="form-input" type="text" name="tag" placeholder="标签">
+                    </div>
+                    <input id="modalBtn" class="login-button" type="submit" th:value="#{login.button}">
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div class="bar">
+        <div class="function-bar">
+            <div class="function-bar-progress">
+                <progress class="progress" value="35" max="100"></progress>
+            </div>
+            <div class="function-bar-button">
+                <button class="stop-button" formaction="@{/button}" formmethod="post">
+                    <i class="fa fa-stop" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cards" id="cards">
+        <div class="card" id="card" th:each="url:${urls}">
+            <div class="card-media">
+                <div class="card-state-icon" th:if="${url.isPassword}"><i class="fa fa-lock" aria-hidden="true"></i></div>
+                <img loading="lazy" th:src ="${url.imgUrlStr}"
+                     onerror="this.onerror=null;this.src='https://luobo.ca/img/loading.gif';" />
+            </div>
+            <div class="card-info">
+                <div class="card-info-title">[[${url.id}]]</div>
+                <div class="card-info-tags">
+                    <div class="card-info-tag">[[${url.date}]]</div>
+                </div>
+            </div>
+            <div class="card-action">
+                <div class="card-action-buttons">
+                    <button class="card-action-button" type="button"><a a th:href = "${url.urlStr}">Link</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    // Get the modal
+    var modal_nav = document.getElementById("nav-tab");
+    var modal = document.getElementById("menu-tab");
+    // Get the button that opens the modal
+    var btn_nav_open = document.getElementById("nav-bar-button-open");
+    var btnup = document.getElementById("menu-bar-button-up");
+    // Get the <btndown> element that closes the modal
+    var btn_nav_close = document.getElementById("nav-bar-button-close");
+    var btndown = document.getElementById("menu-bar-button-down");
+    // When the user clicks the button, open the modal 
+    btnup.onclick = function() {
+      btndown.style.display = "block";
+      modal.style.display = "block";
+      btnup.style.display = "none";
+    }
+    // When the user clicks on <btndown> (x), close the modal
+    btndown.onclick = function() {
+      modal.style.display = "none";
+      btnup.style.display = "block";
+      btndown.style.display = "none";
+    }
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      btnup.style.display = "block";
+      btndown.style.display = "none";
+      }
+    }
+
+    btn_nav_open.onclick = function(){
+        modal_nav.style.display = "block";
+        btn_nav_close.style.display = "block";
+        btn_nav_open.style.display = "none";
+    }
+    
+    btn_nav_close.onclick = function(){
+        modal_nav.style.display = "none";
+        btn_nav_close.style.display = "none";
+        btn_nav_open.style.display = "block";
+    }
+
+
+</script>

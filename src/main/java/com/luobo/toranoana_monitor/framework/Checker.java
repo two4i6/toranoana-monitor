@@ -5,6 +5,7 @@ import com.luobo.toranoana_monitor.dao.UrlDataDao;
 import com.luobo.toranoana_monitor.param.Param;
 import com.luobo.toranoana_monitor.util.ElementChecker;
 import com.luobo.toranoana_monitor.util.ImgCache;
+import com.luobo.toranoana_monitor.util.Util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.HttpURLConnection;
@@ -15,6 +16,7 @@ public abstract class Checker implements Runnable{
     protected Param param = Param.getParam();
     protected UrlData urlData;
     protected int ResponseCode;
+    protected int errorCount;
 
     public Checker(UrlData urlData){
         this.urlData = urlData;
@@ -72,10 +74,17 @@ public abstract class Checker implements Runnable{
             add2List(urlData);
             cleanMem(connection);
         }catch (Exception e){
-            log.info(e.getMessage()
-                    +"id: " +  urlData.getId()
-                    +" 网络开小差！此线程将暂停5分钟！");
-            suspendProcess(connection, param.getSuspendTime()/2);
+            //TODO 临时方法-处理网络错误 可能会陷入死循环？
+            errorCount++;
+            if(errorCount > 199) {
+                log.info(e.getMessage()
+                        + "id: " + urlData.getId()
+                        + " 网络开小差！此线程将暂停5分钟！");
+                errorCount = 0;
+                suspendProcess(connection, param.getSuspendTime());
+            }else{
+                run();
+            }
         }
     }
 
@@ -102,6 +111,7 @@ public abstract class Checker implements Runnable{
      */
     protected void add2List(UrlData urlData){
         if(urlData.isValid()){
+            urlData.setImgUrlStr(Util.getUtil().getImgUrl(urlData.getId()));
             UrlDataDao.getUrlDataDao().update(urlData);
             new Thread(new ImgCache(urlData.getImgUrlStr(), urlData.getId())).start();
         }

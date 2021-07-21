@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 
 public class UrlDataDao implements Dao<UrlData> {
     private static final UrlDataDao urlDataDao = new UrlDataDao();
-    private final List<UrlData> urlDataList = new ArrayList<>();
+    private List<UrlData> urlDataList = new ArrayList<>();
     int index = 0;
 
     @Override
     public Optional<UrlData> add(int id) {
         Util util = Util.getUtil();
-        UrlData urlData = new UrlData(index, id, util.getTime(), util.getUrl(id), util.getImgUrl(id));
+        String catLoading = "https://luobo.ca/img/loading.gif";
+        UrlData urlData = new UrlData(index, id, util.getTime(), util.getUrl(id), catLoading);
         urlData.setUrlStr(urlData.getUrlStr());
         index++;
         urlDataList.add(urlData);
@@ -34,22 +35,28 @@ public class UrlDataDao implements Dao<UrlData> {
         return urlDataList;
     }
 
-    public Collection<UrlData> getAllInvalid() {
-        return   UrlDataDao.getUrlDataDao().getAll().stream()
-                .filter(s -> !s.isValid())
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
     public Collection<UrlData> getAllValid() {
         return   UrlDataDao.getUrlDataDao().getAll().stream()
                 .filter(UrlData::isValid)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public Collection<UrlData> getAllInvalid() {
+        return   UrlDataDao.getUrlDataDao().getAll().stream()
+                .filter(s -> !s.isValid())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public Collection<UrlData> getAllFiltered() {
         return   UrlDataDao.getUrlDataDao().getAll().stream()
+                .filter(s -> !s.isPassword())
                 .filter(UrlData::isValid)
-                .filter(s -> !s.isValid())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public Collection<UrlData> getAllFilteredValid() {
+        return   UrlDataDao.getUrlDataDao().getAll().stream()
+                .filter(s -> s.isPassword() || s.isKey())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -76,6 +83,10 @@ public class UrlDataDao implements Dao<UrlData> {
     @Override
     public boolean isEmpty(){
         return size() == 0;
+    }
+
+    public void drop() {
+        urlDataList = new ArrayList<>();
     }
 
     public static UrlDataDao getUrlDataDao(){

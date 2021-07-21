@@ -15,15 +15,11 @@ public class ButtonController {
             case"停止扫描":
                 //checkerFactory.shutDown(param);
                 break;
-            case"返回主页":
-                return "redirect:/";
-            case"返回结果":
+            case"有效清单":
                 return "redirect:/result/valid";
-            case"自动刷新":
-                return "redirect:/result/valid/auto";
-            case"手动刷新":
-                return "redirect:/result/valid";
-            case"过滤列表":
+            case"无效清单":
+                return "redirect:/result/invalid";
+            case"过滤清单":
                 return "redirect:/result/filtered";
             case"debug":
                 if(!Param.getParam().isDebug()) {

@@ -33,17 +33,10 @@ public class RunnerService {
                         + " 无效: " + UrlDataDao.getUrlDataDao().getAllInvalid().size()
                         + " 有效: " + UrlDataDao.getUrlDataDao().getAllValid().size());
         }
-        try {
-            if (Param.getParam().isDebug())
-                log.info("轮次完成 进入等待...");
-            FileProcess.getFileProcess().exportAllUrl(); //写入存档
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Exception e) {
-            log.info("轮次等待错误");
-        }
-        shutDown();
+        checkerFactory.shutDown();
         log.info(" 初次扫描结束 发现有效: " + UrlDataDao.getUrlDataDao().getAllValid().size()
                 + " 无效: " + UrlDataDao.getUrlDataDao().getAllInvalid().size());
+        FileProcess.getFileProcess().exportAllUrl();
         Scan();
     }
 
@@ -56,6 +49,7 @@ public class RunnerService {
         log.info("开始扫描 " + UrlDataDao.getUrlDataDao().getAllInvalid().size() + " 条无效链接");
         here:
         while (!UrlDataDao.getUrlDataDao().allValid()) {
+            int size = UrlDataDao.getUrlDataDao().getAllInvalid().size();
             for (UrlData urlData : UrlDataDao.getUrlDataDao().getAllInvalid()) {
                 if (isShutDown)
                     break here;
@@ -66,18 +60,13 @@ public class RunnerService {
                             + " 无效: " + UrlDataDao.getUrlDataDao().getAllInvalid().size()
                             + " 有效: " + UrlDataDao.getUrlDataDao().getAllValid().size());
             }
-            try {
-                if (Param.getParam().isDebug())
-                    log.info("轮次完成 进入等待...");
-                FileProcess.getFileProcess().exportAllUrl(); //写入存档
-                TimeUnit.SECONDS.sleep(1);
-            } catch (Exception e) {
-                log.info("轮次等待错误");
-            }
+            if(size == UrlDataDao.getUrlDataDao().getAllInvalid().size())
+                FileProcess.getFileProcess().exportAllUrl(); //如果无变更则不写入
         }
         shutDown();
     }
 
+    //TODO 好像又没有bug了？
     public void shutDown() {
         try{
             setShutDown(true);

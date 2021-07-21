@@ -25,6 +25,13 @@ public class ImgCache implements Runnable {
         path = Paths.get(filePathStr + fileName);
     }
 
+    /**
+     * TODO 返回照片位置
+     */
+    public Path getImg(int id){
+        return null;
+    }
+
     @Override
     public void run() {
         if(!isFileExist(path)) { //如果文件已经存在则不在下载
