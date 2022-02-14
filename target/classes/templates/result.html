@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>结果</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body onload="window.scrollTo(0,document.body.scrollHeight);">
+<form action="#" th:action="@{/button}" method="post">
+    <input class="return-button" type="submit" name="action" value="返回主页" style='position:fixed;left: 0px; top: 0px;'>
+    <input class="return-button" type="submit" name="action" value="过滤列表" style='position:fixed;left: 0px; top: 100px;' th:if="${not #strings.isEmpty(errorMsg)}">
+    <input class="stop-button" type="submit" name="action" value="停止扫描" id="modalBtn" style='position:fixed;right: 0px; top: 0px;'>
+    <input class="return-button" type=button value="刷新页面" href="#bottom" onclick="location.reload()" style='position:fixed;right: 0px; top: 50px;'>
+    <input class="return-button"  type="submit" name="action" value="自动刷新" style='position:fixed;right: 0px; top: 100px;' th:if="${not #strings.isEmpty(errorMsg)}">
+    <input class="stop-button" type="submit" name="action" value="debug" style='position:fixed;right: 0px; top: 800px;'>
+
+    <!-- 弹框部分 -->
+    <div id="simpleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="closeBtn">&times;</span>
+                <h2 style = "text-align:center">结束进程中</h2>
+            </div>
+            <div class="modal-body">
+                <p style = "text-align:center">请稍等~</p>
+                <!-- loading动画 -->
+                <div class="loading">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</form>
+<div id="login-box">
+    <p style="color: navajowhite" th:text="${errorMsg}">扫描已结束/未开始</p>
+    <table id="orderingTable" width="80">
+        <thead>
+        <tr>
+            <th type="string">封面</th>
+            <th type="string">日期</th>
+            <th type="number">序号</th>
+            <th type="string">网址</th>
+        </thead>
+        <tbody>
+            <tr th:each="url:${urls}">
+                <td><img th:src ="${url.imgUrlStr}"></td>
+                <td>[[${url.date}]]</td>
+                <td>[[${url.id}]]</td>
+                <td><a th:href = "${url.urlStr}" target="_blank"/>链接</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="bottom"class="modal-body" th:if="${not #strings.isEmpty(errorMsg)}">
+        <!-- loading动画 -->
+        <div class="loading">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <p style="color: navajowhite" th:text="${errorMsg}">扫描已结束/未开始</p>
+</div>
+</body>
+<script>
+    // 获取弹窗元素
+    var modal = document.getElementById("simpleModal");
+
+    // 获取按钮元素
+    var modalBtn = document.getElementById("modalBtn");
+
+    // 获取关闭弹窗按钮元素
+    var closeBtn = document.getElementsByClassName("closeBtn")[0];
+
+    // 监听打开弹窗事件
+    modalBtn.addEventListener("click",openModal);
+
+    // 监听关闭弹窗事件
+    closeBtn.addEventListener("click",closeModal);
+
+    // 监听window关闭弹窗事件
+    window.addEventListener("click",outsideClick);
+
+    // 弹窗事件
+    function openModal () {
+        modal.style.display = "block";
+    }
+
+    // 关闭弹框事件
+    function closeModal () {
+        modal.style.display = "none";
+    }
+
+    // outsideClick
+    function outsideClick (e) {
+        if(e.target === modal){
+            modal.style.display = "none";
+        }
+    }
+
+</script>
+</html>
